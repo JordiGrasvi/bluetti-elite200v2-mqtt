@@ -1,0 +1,19 @@
+# Dependències de desenvolupament
+pytest>=7.0.0
+pytest-cov>=4.0.0
+pytest-asyncio>=0.21.0
+flake8>=5.0.0
+black>=22.0.0
+isort>=5.10.0
+mypy>=0.991
+bandit>=1.7.0
+safety>=2.0.0
+pre-commit>=2.20.0
+
+# Eines per a debugging
+ipdb>=0.13.0
+pdbpp>=0.10.0
+
+# Documentació
+sphinx>=5.0.0
+sphinx-rtd-theme>=1.0.0

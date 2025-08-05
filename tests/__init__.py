@@ -1,0 +1,1 @@
+# Tests per a bluetti-elite200v2-mqtt

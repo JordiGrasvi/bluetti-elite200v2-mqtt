@@ -1,0 +1,83 @@
+version: '3.8'
+
+# Docker Compose per utilitzar imatge pre-construïda des de GitHub Container Registry
+# Ús: docker-compose -f docker-compose.prebuilt.yml up -d
+
+services:
+  bluetti-mqtt:
+    # Utilitza imatge pre-construïda des de GitHub Container Registry
+    image: ghcr.io/jordigrasvi/bluetti-elite200v2-mqtt:latest
+    container_name: bluetti-elite200v2-mqtt
+    restart: unless-stopped
+    
+    # Accés a Bluetooth de l'host
+    privileged: true
+    network_mode: host
+    
+    # Variables d'entorn - CONFIGURA AQUESTES DADES!
+    environment:
+      - BLUETTI_MAC=XX:XX:XX:XX:XX:XX  # Substitueix per la teva MAC
+      - MQTT_HOST=192.168.1.100        # Substitueix per la teva IP MQTT
+      - MQTT_PORT=1883
+      - MQTT_USERNAME=mqttuser          # Opcional
+      - MQTT_PASSWORD=mqttpass          # Opcional
+      - MQTT_TOPIC=bluetti
+      - LOG_LEVEL=info
+      - POLLING_INTERVAL=5              # Opcional: interval en segons
+      - HA_CONFIG=normal                # normal, none, advanced
+      - VERBOSE=false                   # true per a logs detallats
+    
+    # Volums per a configuració i logs
+    volumes:
+      - ./config:/app/config:ro         # Munta encryption_keys.json aquí
+      - ./logs:/app/logs:rw             # Logs de l'aplicació
+      - /var/run/dbus:/var/run/dbus:ro  # Accés a D-Bus per Bluetooth
+    
+    # Dispositius necessaris per Bluetooth
+    devices:
+      - /dev/bus/usb:/dev/bus/usb       # Adaptadors USB Bluetooth
+    
+    # Etiquetes per a organització
+    labels:
+      - "com.docker.compose.project=bluetti-elite200v2"
+      - "com.docker.compose.service=mqtt-bridge"
+
+  # Servei opcional per a descobriment de dispositius
+  bluetti-discovery:
+    image: ghcr.io/jordigrasvi/bluetti-elite200v2-mqtt:latest
+    container_name: bluetti-discovery
+    privileged: true
+    network_mode: host
+    command: bluetti-discovery
+    
+    volumes:
+      - /var/run/dbus:/var/run/dbus:ro
+    
+    devices:
+      - /dev/bus/usb:/dev/bus/usb
+    
+    profiles:
+      - discovery  # Només s'executa amb --profile discovery
+
+  # Servei opcional per a logging
+  bluetti-logger:
+    image: ghcr.io/jordigrasvi/bluetti-elite200v2-mqtt:latest
+    container_name: bluetti-logger
+    privileged: true
+    network_mode: host
+    command: bluetti-logger
+    
+    environment:
+      - BLUETTI_MAC=XX:XX:XX:XX:XX:XX  # Substitueix per la teva MAC
+      - LOG_FILE=/app/logs/device.log
+    
+    volumes:
+      - ./config:/app/config:ro
+      - ./logs:/app/logs:rw
+      - /var/run/dbus:/var/run/dbus:ro
+    
+    devices:
+      - /dev/bus/usb:/dev/bus/usb
+    
+    profiles:
+      - logger  # Només s'executa amb --profile logger

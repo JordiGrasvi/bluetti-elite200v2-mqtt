@@ -1,0 +1,127 @@
+# Fitxers de configuració amb dades privades
+.env
+encryption_keys.json
+bluetti_device_licence.csv
+
+# Fitxers de log
+*.log
+*.json.log
+
+# Entorns virtuals Python
+venv/
+.venv/
+env/
+.env/
+
+# Cache de Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Distribució / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# pyenv
+.python-version
+
+# celery beat schedule file
+celerybeat-schedule
+
+# SageMath parsed files
+*.sage.py
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Dades capturades i anàlisi
+captured_data.json
+protocol_analysis.json
+stable_analysis.json
+auth_test_results.json
+challenge_response_test.json
+encryption_test.json
+md5_test.json
+timestamp_test.json
+elite200v2_analysis.log
+test.log
+
+# Mòduls binaris de Bluetti
+_bluetti_crypt.so
+Bluetti_Crypt_Module_Linux-*.tar.gz
