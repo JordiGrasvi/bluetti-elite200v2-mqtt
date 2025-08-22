@@ -38,6 +38,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY bluetti_mqtt/ ./bluetti_mqtt/
 COPY tools/ ./tools/
 COPY setup.py pyproject.toml ./
+COPY README.md ./
 
 # Instal·la l'aplicació
 RUN pip install -e .

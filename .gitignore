@@ -1,4 +1,27 @@
-# Fitxers de configuració amb dades privades
+# Ignora fitxers de configuració privada i claus
+/docker/config/encryption_keys.json
+*.env
+*.key
+*.pem
+*.csv
+# Ignora fitxers de logs i temporals
+*.log
+*.tmp
+logs/
+# Ignora dependències i entorns virtuals
+__pycache__/
+*.pyc
+venv/
+.env/
+# Ignora arxius de backup
+*.bak
+# Ignora arxius de migració
+*.tar.gz
+# Ignora configuració local
+local_settings.py
+# Ignora fitxers de sistema
+.DS_Store
+Thumbs.db# Fitxers de configuració amb dades privades
 .env
 encryption_keys.json
 bluetti_device_licence.csv

@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   bluetti-mqtt:
     # Opció 1: Construir localment des del codi font
