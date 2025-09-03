@@ -3,7 +3,7 @@
 [![CI](https://github.com/JordiGrasvi/bluetti-elite200v2-mqtt/workflows/CI/badge.svg)](https://github.com/JordiGrasvi/bluetti-elite200v2-mqtt/actions)
 [![Docker](https://img.shields.io/badge/docker-ghcr.io-blue)](https://github.com/JordiGrasvi/bluetti-elite200v2-mqtt/pkgs/container/bluetti-elite200v2-mqtt)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Python 3.7+](https://img.shields.io/badge/python-3.7+-blue.svg)](https://www.python.org/downloads/)
+[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 
 Aquest projecte proporciona una interfície MQTT per a l'estació de càrrega Bluetti Elite 200 V2, permetent llegir dades del dispositiu via Bluetooth i publicar-les a un broker MQTT per a la seva integració amb sistemes de domòtica com Home Assistant.
 
@@ -77,7 +77,78 @@ MQTT_TOPIC=bluetti
 LOG_LEVEL=info
 ```
 
+## Execució amb Docker
+
+Si prefereixes utilitzar el contenidor publicat a GHCR, pots fer-ho de forma molt senzilla. El contenidor necessita accés al socket de D-Bus del sistema per parlar amb BlueZ (Bluetooth) i la xarxa en mode host per simplificar la descoberta i evitar problemes de ports.
+
+### `docker run`
+
+```bash
+docker run -d \
+   --name bluetti-mqtt \
+   --network host \
+   -v /var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket:ro \
+   -v $(pwd)/config:/app/config \
+   -v $(pwd)/logs:/app/logs \
+   -e BLUETTI_MAC=XX:XX:XX:XX:XX:XX \
+   -e MQTT_HOST=192.168.1.100 \
+   -e MQTT_PORT=1883 \
+   -e MQTT_USERNAME=usuari \
+   -e MQTT_PASSWORD=contrasenya \
+   -e MQTT_TOPIC=bluetti \
+   -e LOG_LEVEL=info \
+   -e ENCRYPTION_KEY_FILE=/app/config/encryption_keys.json \
+   ghcr.io/jordigrasvi/bluetti-elite200v2-mqtt:latest
+```
+
+### `docker-compose.yml` d'exemple
+
+```yaml
+services:
+   bluetti:
+      image: ghcr.io/jordigrasvi/bluetti-elite200v2-mqtt:latest
+      container_name: bluetti-mqtt
+      network_mode: host
+      restart: unless-stopped
+      environment:
+         BLUETTI_MAC: "XX:XX:XX:XX:XX:XX"  # Substitueix per la MAC real
+         MQTT_HOST: "192.168.1.100"
+         MQTT_PORT: "1883"
+         MQTT_USERNAME: "usuari"
+         MQTT_PASSWORD: "contrasenya"
+         MQTT_TOPIC: "bluetti"
+         LOG_LEVEL: "info"
+         ENCRYPTION_KEY_FILE: "/app/config/encryption_keys.json"
+      volumes:
+         - ./config:/app/config
+         - ./logs:/app/logs
+         - /var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket:ro
+```
+
+Després només cal executar:
+
+```bash
+
+```
+
+### Notes de seguretat
+- No posis credencials sensibles al repositori; utilitza un fitxer `.env` local o un secret manager si cal.
+- El mode `host` és el més senzill per BLE + MQTT local. Si vols restringir-lo, pots provar `network_mode: bridge` i exposar només els ports MQTT si algun dia el contenidor actués de broker (ara no cal).
+- El socket D-Bus es munta en mode lectura (`:ro`).
+
+### Actualització de la imatge
+
+```bash
 ## Configuració
+docker compose up -d --force-recreate
+```
+
+Per fixar una versió exacta, substitueix `:latest` pel digest:
+
+```bash
+image: ghcr.io/jordigrasvi/bluetti-elite200v2-mqtt@sha256:XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+```
+
 
 ### Obtenció de l'adreça MAC del dispositiu
 
