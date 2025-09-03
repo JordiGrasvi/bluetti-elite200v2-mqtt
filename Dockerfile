@@ -14,12 +14,16 @@ ENV PIP_NO_CACHE_DIR=1
 ENV PIP_DISABLE_PIP_VERSION_CHECK=1
 
 # Instal·la dependències del sistema
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     bluetooth \
     bluez \
     libbluetooth-dev \
+    libffi-dev \
+    libssl-dev \
     pkg-config \
-    gcc \
+    build-essential \
+    rustc \
+    cargo \
     && rm -rf /var/lib/apt/lists/*
 
 # Crea usuari no-root
