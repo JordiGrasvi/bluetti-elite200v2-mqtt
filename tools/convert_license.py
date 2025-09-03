@@ -21,24 +21,41 @@ def convert_license_to_json(license_file, mac_address=None, output_file="encrypt
     """
     
     try:
-        # Llegeix el fitxer de llicència
+        # Llegeix i normalitza (ignorem línies buides)
         with open(license_file, 'r') as f:
-            lines = f.read().strip().split('\n')
-        
+            raw_lines = [l.strip() for l in f.readlines()]
+
+        lines = [l for l in raw_lines if l]
+
+        # Formats acceptats (després de filtrar buides):
+        # 4 línies: bluetti, timestamp, md5_key, encryption_key
+        # 5+ línies: (legacy) bluetti pot anar precedit d'una línia buida en l'arxiu original
         if len(lines) < 4:
-            print("❌ Error: El fitxer de llicència no té el format correcte")
-            print("   Format esperat:")
-            print("   Línia 1: (buida)")
-            print("   Línia 2: bluetti")
-            print("   Línia 3: timestamp")
-            print("   Línia 4: clau MD5")
-            print("   Línia 5: clau d'encriptació")
+            print("❌ Error: El fitxer de llicència no té el format mínim (4 línies no buides)")
+            print("   Format esperat simplificat:")
+            print("     1: bluetti")
+            print("     2: timestamp")
+            print("     3: clau MD5")
+            print("     4: clau d'encriptació")
             return False
-        
-        # Extreu les dades
-        timestamp = lines[2].strip()
-        md5_key = lines[3].strip()
-        encryption_key = lines[4].strip()
+
+        # Si hi hagués més línies, agafem les primeres vàlides en ordre
+        # (això dóna tolerància a formats futurs amb metadades extra)
+        bluetti_marker = lines[0].lower()
+        if bluetti_marker != 'bluetti':
+            # Algunes variants poden tenir primera línia tipus BOM o text; intentem localitzar 'bluetti'
+            try:
+                idx = [i for i, v in enumerate(lines) if v.lower() == 'bluetti'][0]
+                lines = lines[idx:]
+                if len(lines) < 4:
+                    raise ValueError("No hi ha prou línies després del marcador bluetti")
+            except Exception:
+                print("❌ Error: No s'ha trobat el marcador 'bluetti' a la primera línia")
+                return False
+
+        timestamp = lines[1].strip()
+        md5_key = lines[2].strip()
+        encryption_key = lines[3].strip()
         
         print(f"📄 Processant fitxer de llicència:")
         print(f"   Timestamp: {timestamp}")
