@@ -6,6 +6,11 @@ on:
   pull_request:
     branches: [ main ]
 
+permissions:
+  contents: read
+  packages: write
+  actions: read
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -117,7 +122,8 @@ jobs:
       id: meta
       uses: docker/metadata-action@v4
       with:
-        images: ghcr.io/${{ github.repository }}
+  # Forcem nom d'imatge en minúscules explícit per evitar discrepàncies amb GHCR
+  images: ghcr.io/jordigrasvi/bluetti-elite200v2-mqtt
         tags: |
           type=ref,event=branch
           type=ref,event=pr
